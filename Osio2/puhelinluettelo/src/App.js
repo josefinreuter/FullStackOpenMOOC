@@ -2,18 +2,27 @@ import React, {Component} from 'react';
 import Persons from './components/Persons';
 import SearchEngine from './components/SearchEngine'
 import AddPersonForm from "./components/AddPersonForm";
+import axios from 'axios';
 
 
 class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            persons: props.persons,
+            persons: [],
             newName: '',
             newNumber: '',
             filter: '',
             filteredList: []
         }
+    }
+
+    componentDidMount() {
+        axios
+            .get('http://localhost:3001/persons')
+            .then(response => {
+                this.setState({persons: response.data})
+            })
     }
 
     handleNameInputChange = (event) => {
