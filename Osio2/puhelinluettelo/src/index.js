@@ -28,7 +28,18 @@ const persons = [
         id: 5,
         name: 'Martti Tienari',
         number: '040-123456'
+    },
+    {
+        id: 6,
+        name: 'Anna Jokinen',
+        number: '040-123456'
+    },
+    {
+        id: 7,
+        name: 'Matti Herranen',
+        number: '040-123456'
     }
+
 ]
 
 ReactDOM.render(<App persons={persons}/>, document.getElementById('root'));

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Person from './components/Person';
+import Persons from './components/Persons';
 import SearchEngine from './components/SearchEngine'
 import AddPersonForm from "./components/AddPersonForm";
 
@@ -28,11 +28,11 @@ class App extends Component {
         const fullList = this.state.persons;
         const filter = event.target.value;
         const filteredList = [];
+
         for (let i = 0; i < fullList.length; i++) {
             if (fullList[i].name.toLowerCase().includes(filter.toLowerCase())) {
                 filteredList.push(fullList[i])
             }
-
         }
 
         this.setState({
@@ -52,7 +52,7 @@ class App extends Component {
                 return
             }
 
-            if (this.state.persons[i].name === this.state.newName) {
+            if (this.state.persons[i].name.toLowerCase() === this.state.newName.toLowerCase()) {
                 alert("Nimi löytyy jo luettelosta");
                 this.setState({
                     newName: '',
@@ -61,9 +61,7 @@ class App extends Component {
                 return
             }
 
-
         }
-
 
         const newPerson = {
             id: this.state.persons.length + 1,
@@ -83,7 +81,6 @@ class App extends Component {
 
     };
 
-
     render() {
 
         const filteredNames =
@@ -99,23 +96,28 @@ class App extends Component {
         return (
             <div>
                 <h2>Puhelinluettelo</h2>
-
-                <div>
-                    Etsi nimellä <SearchEngine handleFilter={this.handleFilter} filter={this.state.filter}/>
-                </div>
-                <br/>
-
-                <AddPersonForm addPerson={this.addPerson} newName={this.state.newName}
-                               handleNameInput={this.handleNameInputChange}
-                               newNumber={this.state.newNumber} handleNumberInput={this.handleNumberInputChange}
+                <SearchEngine
+                    text="Etsi nimellä"
+                    handleFilter={this.handleFilter}
+                    filter={this.state.filter}
                 />
-
-                <h2>Luettelosta löytyvät nimet ja numerot</h2>
-                <table>
-                    <tbody>
-                    {filteredNames.map(person => <Person key={person.id} person={person}/>)}
-                    </tbody>
-                </table>
+                <br/>
+                <AddPersonForm
+                    text="Lisää uusi"
+                    name="Nimi"
+                    number="Numero"
+                    addPerson={this.addPerson}
+                    newName={this.state.newName}
+                    handleNameInputChange={this.handleNameInputChange}
+                    newNumber={this.state.newNumber}
+                    handleNumberInputChange={this.handleNumberInputChange}
+                    add="Lisää"
+                />
+                <br/>
+                <Persons
+                    text="Luettelosta löytyvät nimet ja numerot"
+                    filteredNames={filteredNames}
+                />
             </div>
         )
     }

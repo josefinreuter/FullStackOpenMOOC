@@ -1,12 +1,14 @@
 import React from 'react';
 
-const SearchEngine = (props) => {
+const SearchEngine = ({text, handleFilter, filter}) => {
 
     return (
-        <input
-            value={props.filter}
-            onChange={props.handleFilter}
+        <div>
+            {text} <input
+            value={filter}
+            onChange={handleFilter}
         />
+        </div>
     )
 
 }
