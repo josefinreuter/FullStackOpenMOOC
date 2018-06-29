@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import Persons from './components/Persons';
 import SearchEngine from './components/SearchEngine'
 import AddPersonForm from "./components/AddPersonForm";
-import axios from 'axios';
+import personService from './services/personService'
+import Notification from "./components/Notification";
 
 
 class App extends Component {
@@ -13,16 +14,21 @@ class App extends Component {
             newName: '',
             newNumber: '',
             filter: '',
-            filteredList: []
+            filteredList: [],
+            message: null
         }
     }
 
     componentDidMount() {
-        axios
-            .get('http://localhost:3001/persons')
+        personService
+            .getAll()
             .then(response => {
-                this.setState({persons: response.data})
+                this.setState({persons: response})
             })
+            .catch(error => {
+                alert("Puhelinluettelotietojen haku epäonnistui.");
+            })
+
     }
 
     handleNameInputChange = (event) => {
@@ -62,31 +68,98 @@ class App extends Component {
             }
 
             if (this.state.persons[i].name.toLowerCase() === this.state.newName.toLowerCase()) {
-                alert("Nimi löytyy jo luettelosta");
-                this.setState({
-                    newName: '',
-                    newNumber: ''
-                });
+
+                if (window.confirm(`${this.state.persons[i].name} on jo luettelossa, korvataanko vanha numero uudella?`)) {
+                    const person = this.state.persons[i];
+                    const changedPerson = {...person, number: this.state.newNumber};
+
+                    personService
+                        .update(person.id, changedPerson)
+                        .then(changedPerson => {
+                            const persons = this.state.persons.filter(p => p.id !== person.id);
+                            this.setState({
+                                persons: persons.concat(changedPerson),
+                                newName: '',
+                                newNumber: '',
+                                message: `${this.state.persons[i].name} numeroa päivitettiin onnistuneesti.`
+                            });
+                            setTimeout(() => {
+                                this.setState({message: null})
+                            }, 5000)
+                        }).catch(error => {
+                        const newPersonObject = {
+                            name: this.state.persons[i].name,
+                            number: this.state.newNumber
+                        };
+
+                        personService
+                            .create(newPersonObject)
+                            .then(newPerson => {
+                                const persons = this.state.persons.filter(p => p.id !== person.id);
+                                this.setState({
+                                    persons: persons.concat(newPerson),
+                                    newName: '',
+                                    newNumber: '',
+                                    message: `${this.state.persons[i].name} numeroa päivitettiin onnistuneesti.`
+                                });
+                                setTimeout(() => {
+                                    this.setState({message: null})
+                                }, 5000)
+                            })
+                    });
+                    return
+                }
                 return
             }
 
         }
 
-        const newPerson = {
-            id: this.state.persons.length + 1,
+        const newPersonObject = {
             name: this.state.newName,
             number: this.state.newNumber
-
         };
 
-        const persons = this.state.persons.concat(newPerson);
+        personService
+            .create(newPersonObject)
+            .then(newPerson => {
+                this.setState({
+                    persons: this.state.persons.concat(newPerson),
+                    newName: '',
+                    newNumber: '',
+                    message: `${this.state.newName} lisätty luetteloon.`
+                });
+                setTimeout(() => {
+                    this.setState({message: null})
+                }, 5000)
+            })
+    };
 
-        this.setState({
-            persons,
-            newName: '',
-            newNumber: ''
-        })
+    deletePerson = (person) => {
+        const newPersons = this.state.persons.filter(p => p.id !== person.id)
 
+        if (window.confirm(`Poistetaanko ${person.name}?`)) {
+            personService
+                .deletePerson(person.id)
+                .then(response => {
+                    this.setState({
+                        persons: newPersons,
+                        message: `${person.name} poistettu luettelosta.`
+                    });
+                    setTimeout(() => {
+                        this.setState({message: null})
+                    }, 5000)
+                })
+                .catch(error => {
+                    this.setState({
+                        persons: newPersons,
+                        message: `${person.name} poistettu luettelosta.`
+                    });
+                    setTimeout(() => {
+                        this.setState({message: null})
+                    }, 5000)
+
+                })
+        }
 
     };
 
@@ -112,7 +185,7 @@ class App extends Component {
                 />
                 <br/>
                 <AddPersonForm
-                    text="Lisää uusi"
+                    text="Lisää uusi / muuta olemassaolevan numeroa"
                     name="Nimi"
                     number="Numero"
                     addPerson={this.addPerson}
@@ -123,9 +196,11 @@ class App extends Component {
                     add="Lisää"
                 />
                 <br/>
+                <Notification message={this.state.message}/>
                 <Persons
                     text="Luettelosta löytyvät nimet ja numerot"
                     filteredNames={filteredNames}
+                    deletePerson={this.deletePerson}
                 />
             </div>
         )

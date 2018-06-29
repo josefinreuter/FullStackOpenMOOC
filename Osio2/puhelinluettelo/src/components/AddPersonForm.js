@@ -4,12 +4,10 @@ const AddPersonForm = ({text, name, number, addPerson, newName, handleNameInputC
 
     return (
         <div>
+            <h4>{text}</h4>
             <form onSubmit={addPerson}>
                 <table>
                     <tbody>
-                    <tr>
-                        <th>{text}</th>
-                    </tr>
                     <tr>
                         <td>
                             {name}
