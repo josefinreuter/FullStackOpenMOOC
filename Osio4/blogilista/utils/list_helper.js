@@ -71,7 +71,7 @@ const mostBlogs = (blogs) => {
                     mostOccurrences = occurrences;
                     author = authors[i];
                 }
-                
+
             }
 
             occurrences = 0;
