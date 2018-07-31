@@ -4,6 +4,7 @@ const api = supertest(app)
 const Blog = require('../models/blog')
 const {blogs, blogsInDb} = require('./tests_helper')
 
+describe.skip('blog api', () => {
 describe('when there are initial blogs saved', async () => {
     beforeAll(async () => {
         await Blog.remove({})
@@ -184,4 +185,5 @@ describe('when there are initial blogs saved', async () => {
         server.close()
     })
 
+})
 })

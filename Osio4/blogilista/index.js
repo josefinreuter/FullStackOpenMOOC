@@ -5,7 +5,10 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const mongoose = require('mongoose')
 const blogsRouter = require('./controllers/blogs')
+const usersRouter = require('./controllers/users')
+const loginRouter = require('./controllers/login')
 const config = require('./utils/config')
+const middleware = require('./utils/middleware')
 require('dotenv').config()
 
 
@@ -22,11 +25,14 @@ mongoose
         console.log(err)
     })
 
-
+app.use(express.static('build'))
 app.use(cors())
 app.use(bodyParser.json())
-app.use(express.static('build'))
+app.use(middleware.tokenExtractor)
+
+app.use('/api/login', loginRouter)
 app.use('/api/blogs', blogsRouter)
+app.use('/api/users', usersRouter)
 
 const server = http.createServer(app)
 

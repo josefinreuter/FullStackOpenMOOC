@@ -1,4 +1,5 @@
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const emptyList = []
 
@@ -70,6 +71,11 @@ const blogsInDb = async () => {
     return blogs
 }
 
+const usersInDb = async () => {
+    const users = await User.find({})
+    return users
+}
+
 module.exports = {
-    emptyList, listWithOneBlog, blogs, blogsInDb
+    emptyList, listWithOneBlog, blogs, blogsInDb, usersInDb
 }
