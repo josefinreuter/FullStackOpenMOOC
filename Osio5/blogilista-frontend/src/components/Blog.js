@@ -5,7 +5,8 @@ class Blog extends React.Component {
         super(props)
         this.state = {
             visible: false,
-            blog: props.blog
+            blog: props.blog,
+            user: props.user
         }
     }
 
@@ -14,7 +15,7 @@ class Blog extends React.Component {
     }
 
 
-    makeVisible = () => {
+    toggleVisibility = () => {
         this.setState({visible: !this.state.visible})
     }
 
@@ -34,16 +35,19 @@ class Blog extends React.Component {
                     {this.state.visible ?
                         <div>
                             <span
-                                onClick={this.makeVisible}>{this.state.blog.title}, {this.state.blog.author} </span>
+                                onClick={this.toggleVisibility}>{this.state.blog.title}, {this.state.blog.author} </span>
                             <br/>
                             <a href={this.state.blog.url}>{this.state.blog.url}</a>
                             <br/>
                             {this.state.blog.likes} likes
                             <button onClick={() => this.props.likeBlog(this.state.blog.id)}>Like</button>
                             <br/>
-                            added by {this.props.blog.user.name}
+                            added by {this.state.blog.user === undefined ? 'anonymous' : this.state.blog.user.name}
+                            <br/>
+                            {(this.state.blog.user === undefined || this.state.blog.user.username === this.state.user.username) ?
+                                <button onClick={() => this.props.deleteBlog(this.state.blog.id)}>Delete</button> : ''}
                         </div>
-                        : <div onClick={this.makeVisible}> {this.state.blog.title}, {this.state.blog.author}</div>}
+                        : <div onClick={this.toggleVisibility}> {this.state.blog.title}, {this.state.blog.author}</div>}
 
                 </div>
             </div>

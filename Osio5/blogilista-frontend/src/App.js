@@ -88,8 +88,10 @@ class App extends Component {
                 url: this.state.newUrl
             })
 
+            const blogs = await blogService.getAll()
+
             this.setState({
-                blogs: this.state.blogs.concat(newBlog),
+                blogs: blogs,
                 newTitle: '',
                 newAuthor: '',
                 newUrl: '',
@@ -101,7 +103,7 @@ class App extends Component {
 
         } catch (e) {
             this.setState({
-                message: 'Blog addition failed, title or url missing.',
+                message: 'Blog addition failed, title or url missing.'
             })
             setTimeout(() => {
                 this.setState({message: null})
@@ -115,24 +117,20 @@ class App extends Component {
         try {
             const blog = this.state.blogs.find(b => b.id === id)
 
-            console.log(blog.user)
 
-            const updatedBlog = await
-
-                blogService.updateBlog(blog.id, {
-                    title: blog.title,
-                    author: blog.author,
-                    url: blog.url,
-                    likes: blog.likes + 1,
-                    user: blog.user
-                })
-
-            console.log(updatedBlog)
-
-            const blogs = this.state.blogs.filter(b => b.id !== id)
+            await blogService.updateBlog(blog.id, {
+                title: blog.title,
+                author: blog.author,
+                url: blog.url,
+                likes: blog.likes + 1,
+                user: blog.user
+            })
 
 
-            this.setState({blogs: blogs.concat(updatedBlog)})
+            const blogs = await blogService.getAll()
+
+
+            this.setState({blogs: blogs})
 
 
         } catch (e) {
@@ -141,6 +139,35 @@ class App extends Component {
         }
 
 
+    }
+
+    deleteBlog = async (id) => {
+        try {
+            const blog = this.state.blogs.find(b => b.id === id)
+
+            if (window.confirm(`Delete '${blog.title}'?`)) {
+                await blogService.deleteBlog(id)
+
+                const newBlogs = this.state.blogs.filter(b => b.id !== id)
+
+                this.setState({
+                    blogs: newBlogs,
+                    message: `'${blog.title}' by ${blog.author} was deleted!`
+                })
+                setTimeout(() => {
+                    this.setState({message: null})
+                }, 5000)
+            }
+
+        } catch (e) {
+            this.setState({
+                message: 'Blog deletion failed.'
+            })
+            setTimeout(() => {
+                this.setState({message: null})
+            }, 5000)
+
+        }
     }
 
     render() {
@@ -185,7 +212,8 @@ class App extends Component {
 
                     <h3>Existing blogs: </h3>
                     {blogs.map(blog =>
-                        <Blog key={blog.id} blog={blog} likeBlog={this.likeBlog}/>)}
+                        <Blog key={blog.id} blog={blog} user={this.state.user} likeBlog={this.likeBlog}
+                              deleteBlog={this.deleteBlog}/>)}
                     <br/>
 
                     <Togglable buttonLabel="New Blog" ref={component => this.blogForm = component}>
