@@ -173,7 +173,7 @@ class App extends Component {
     render() {
 
         const loginForm = () => (
-            <div>
+            <div className="loginForm">
                 <h2>Login</h2>
 
                 <form onSubmit={this.login}>
@@ -233,7 +233,7 @@ class App extends Component {
 
 
         return (
-            <div>
+            <div className="app">
                 <Notification message={this.state.message}/>
                 {this.state.user === null ?
                     loginForm() : blogForm()
