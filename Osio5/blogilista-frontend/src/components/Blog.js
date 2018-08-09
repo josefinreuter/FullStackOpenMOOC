@@ -33,7 +33,7 @@ class Blog extends React.Component {
             <div style={blogStyle}>
                 <div>
                     {this.state.visible ?
-                        <div>
+                        <div className="allContent">
                             <span
                                 onClick={this.toggleVisibility}>{this.state.blog.title}, {this.state.blog.author} </span>
                             <br/>
@@ -47,7 +47,8 @@ class Blog extends React.Component {
                             {(this.state.blog.user === undefined || this.state.blog.user.username === this.state.user.username) ?
                                 <button onClick={() => this.props.deleteBlog(this.state.blog.id)}>Delete</button> : ''}
                         </div>
-                        : <div onClick={this.toggleVisibility}> {this.state.blog.title}, {this.state.blog.author}</div>}
+                        : <div onClick={this.toggleVisibility}
+                               className="initialContent"> {this.state.blog.title}, {this.state.blog.author}</div>}
 
                 </div>
             </div>
