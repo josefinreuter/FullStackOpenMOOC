@@ -5,7 +5,10 @@ describe('unicafe reducer', () => {
     const initialState = {
         good: 0,
         ok: 0,
-        bad: 0
+        bad: 0,
+        average: 0,
+        positive: 0,
+        feedback: 0
     }
 
     it('should return a proper initial state when called with undefined state', () => {
@@ -30,7 +33,10 @@ describe('unicafe reducer', () => {
         expect(newState).toEqual({
             good: 1,
             ok: 0,
-            bad: 0
+            bad: 0,
+            average: '1.0',
+            positive: '100.0',
+            feedback: 1
         })
     })
 
@@ -46,7 +52,11 @@ describe('unicafe reducer', () => {
         expect(newState).toEqual({
             good: 0,
             ok: 1,
-            bad: 0
+            bad: 0,
+            average: '0.0',
+            positive: '0.0',
+            feedback: 1
+
         })
     })
 
@@ -62,7 +72,10 @@ describe('unicafe reducer', () => {
         expect(newState).toEqual({
             good: 0,
             ok: 0,
-            bad: 1
+            bad: 1,
+            average: '-1.0',
+            positive: '0.0',
+            feedback: 1
         })
     })
 
@@ -78,7 +91,10 @@ describe('unicafe reducer', () => {
         expect(newState).toEqual({
             good: 0,
             ok: 0,
-            bad: 0
+            bad: 0,
+            average: 0,
+            positive: 0,
+            feedback: 0
         })
     })
 })
