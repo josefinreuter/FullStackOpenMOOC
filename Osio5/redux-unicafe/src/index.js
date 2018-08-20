@@ -41,7 +41,7 @@ const Statistiikka = ({click}) => {
                 </tr>
                 <tr>
                     <td>positiivisia</td>
-                    <td>{store.getState().positive}</td>
+                    <td>{store.getState().positive} %</td>
                 </tr>
                 </tbody>
             </table>
