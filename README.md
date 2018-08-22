@@ -15,3 +15,6 @@ Node.js routers and testing, async/await pattern, Mongoose schemas, JWT and toke
 
 Osio 5:
 React frontend testing, Redux.
+
+Osio 6:
+Redux combined reducers & connect.
