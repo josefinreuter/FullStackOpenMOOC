@@ -17,4 +17,4 @@ Osio 5:
 React frontend testing, Redux.
 
 Osio 6:
-Redux combined reducers & connect.
+Redux combined reducers.
