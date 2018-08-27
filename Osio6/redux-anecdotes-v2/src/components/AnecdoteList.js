@@ -1,75 +1,44 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import {voteForAnecdote} from "../reducers/anecdoteReducer";
 import {clearNotification, voteNotification} from "../reducers/notificationReducer";
 import Filter from "./Filter";
 
 
 class AnecdoteList extends React.Component {
-    componentDidMount() {
-        const { store } = this.context
-        this.unsubscribe = store.subscribe(() =>
-            this.forceUpdate()
-        )
-    }
-
-    componentWillUnmount() {
-        this.unsubscribe()
-    }
 
     vote = (anecdote) => () => {
       const id = anecdote.id
       const content = anecdote.content
-      this.context.store.dispatch(
-            voteForAnecdote(id)
-        )
-      this.context.store.dispatch(
-            voteNotification(content)
-        )
+
+      this.props.voteForAnecdote(id)
+      this.props.voteNotification(content)
+
       setTimeout(()=> {
-          this.context.store.dispatch(
-              clearNotification()
-          )
+          this.props.clearNotification()
       }, 5000)
     }
 
-    filterAnecdotes() {
-        const fullList = this.context.store.getState().anecdotes
-        const filter = this.context.store.getState().filter
-        const filteredList = []
-
-        for (let i = 0; i < fullList.length; i++) {
-            if (fullList[i].content.toLowerCase().includes(filter.toLowerCase())) {
-                filteredList.push(fullList[i])
-            }
-        }
-        
-        if ('' !== filter) {
-            return filteredList
-        }
-
-        return fullList
-    }
 
   render() {
-    const anecdotes = this.filterAnecdotes()
     return (
       <div>
         <h2>Anecdotes</h2>
           <Filter/>
-        {anecdotes.sort((a, b) => b.votes - a.votes).map(anecdote =>
+        {this.props.visibleAnecdotes.sort((a, b) => b.votes - a.votes).map(anecdote =>
           <div key={anecdote.id}>
             <div>
               {anecdote.content}
             </div>
             <div>
-              has {anecdote.votes}
+              has {anecdote.votes} votes {' '}
               <button onClick={
                this.vote(anecdote)
               }>
                 vote
               </button>
             </div>
+              <br/>
           </div>
         )}
       </div>
@@ -77,8 +46,21 @@ class AnecdoteList extends React.Component {
   }
 }
 
-AnecdoteList.contextTypes = {
-    store: PropTypes.object
+const filterAnecdotes = (anecdotes, filter) => {
+    if (filter === '') {
+        return  anecdotes
+    }
+    const filteredList = anecdotes.filter(anecdote => anecdote.content.includes(filter))
+    return filteredList
 }
 
-export default AnecdoteList
+const mapStateToProps = (state) => {
+    return {
+        visibleAnecdotes: filterAnecdotes(state.anecdotes, state.filter)
+    }
+}
+
+export default connect(
+    mapStateToProps,
+    { voteForAnecdote, clearNotification, voteNotification }
+) (AnecdoteList)

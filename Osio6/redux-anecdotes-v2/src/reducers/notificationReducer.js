@@ -2,7 +2,7 @@ const initialNotification = ''
 
 
 const notificationReducer = (state = initialNotification, action) => {
-    console.log(action)
+    console.log('ACTION: ', action.type)
     switch (action.type) {
         case 'VOTE_NOTIF':
             return 'You voted for: ' + action.anecdote
