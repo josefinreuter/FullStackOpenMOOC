@@ -1,19 +1,33 @@
 import React from 'react'
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom'
 
-const Menu = () => (
-  <div>    
-    <Link to='/'>anecdotes</Link>&nbsp;
-    <Link to='/create'>create new</Link>&nbsp;
-    <Link to='/about'>about</Link>&nbsp;
+const Menu = () => {
+    const menuStyle = {
+        width: 340,
+        borderStyle: 'double',
+        borderWidth: 3,
+        padding: 15,
+        textDecoration: 'none',
+        letterSpacing: 1
+    }
+
+    const linkStyle = {
+        textDecoration: 'none'
+    }
+
+    return (
+  <div style={menuStyle}>
+    <NavLink exact to='/' activeStyle={{fontWeight: 'bold'}} style={linkStyle}>ANECDOTES</NavLink>&nbsp; | &nbsp;
+    <NavLink exact to='/create' activeStyle={{fontWeight: 'bold'}} style={linkStyle}>CREATE NEW</NavLink>&nbsp; | &nbsp;
+    <NavLink exact to='/about'activeStyle={{fontWeight: 'bold'}} style={linkStyle}>ABOUT</NavLink>&nbsp;
   </div>
-)
+)}
 
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} > <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link></li>)}
+      {anecdotes.map(anecdote => <li key={anecdote.id} > <NavLink to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</NavLink></li>)}
     </ul>  
   </div>
 )
@@ -49,11 +63,22 @@ const Footer = () => (
   </div>
 )
 
-const Notification =({notification}) => (
-    <div>
+const Notification =({notification}) => {
+    const notificationStyle = {
+        width: 500,
+        borderStyle: 'solid',
+        borderWidth: 1,
+        borderColor: '#63a87a',
+        backgroundColor: '#82dda1',
+        padding: 10
+    }
+
+    return(
+    <div style={notificationStyle}>
         {notification}
     </div>
-)
+    )
+}
 
 class CreateNew extends React.Component {
   constructor() {
@@ -133,7 +158,7 @@ class App extends React.Component {
   addNew = (anecdote, history) => {
     anecdote.id = (Math.random() * 10000).toFixed(0)
       history.push('/')
-    this.setState({ anecdotes: this.state.anecdotes.concat(anecdote),  notification: `You created: '${anecdote.content}'`})
+    this.setState({ anecdotes: this.state.anecdotes.concat(anecdote),  notification: `You successfully created: '${anecdote.content}'`})
       setTimeout(()=> {
           this.setState({notification: ''})
       }, 10000)
@@ -167,6 +192,8 @@ class App extends React.Component {
         <Router>
         <div>
           <Menu />
+            <br/>
+            <br/>
             {this.state.notification === '' ? '' : <Notification notification={this.state.notification}/>}
           <Route exact path="/" render={() => <AnecdoteList anecdotes={this.state.anecdotes} />}/>
           <Route exact path="/create" render={({history}) => <CreateNew addNew={this.addNew} history={history}/>}/>
